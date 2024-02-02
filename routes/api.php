@@ -19,7 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
 //turns
 Route::get('/turns/', [TurnsController::class, 'index']);
 Route::get('/turns/{id}/', [TurnsController::class, 'watch']);
