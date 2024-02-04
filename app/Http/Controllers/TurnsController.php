@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Turns;
 use Illuminate\Http\Request;
-use App\Events\UpdateTurns;
+use App\Events\EventTurn;
 
 class TurnsController extends Controller
 {
@@ -102,7 +102,7 @@ class TurnsController extends Controller
          }
         $turns->save();
         $msg = 'register_turn';
-        event(new UpdateTurns($msg));
+        event(new EventTurn($msg));
         return response()->json(["data"=>$turns],200);
     }
 
@@ -145,7 +145,7 @@ class TurnsController extends Controller
                 $turn->update($request->all());
                 $msg = ['action'=>'update_turn'];
             }
-            event(new UpdateTurns($msg));
+            event(new EventTurn($msg));
             return response()->json(["data"=>"ok"],200);
         }catch (Exception $e) {
             return response()->json(["data"=>"none"],200);
@@ -179,7 +179,7 @@ class TurnsController extends Controller
         try{
             $turn = Turns::destroy($id);
             $msg = 'delete_turn';
-            event(new UpdateTurns($msg));
+            event(new EventTurn($msg));
             return response()->json(["data"=>"ok"],200);
         }catch (Exception $e) {
             return response()->json(["data"=>"none"],200);
