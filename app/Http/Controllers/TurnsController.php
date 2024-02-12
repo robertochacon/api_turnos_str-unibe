@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Turns;
 use Illuminate\Http\Request;
 use App\Events\EventTurn;
+use Carbon\Carbon;
 
 class TurnsController extends Controller
 {
@@ -95,11 +96,8 @@ class TurnsController extends Controller
      */
     public function register(Request $request)
     {
+        // $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
         $turns = new Turns(request()->all());
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('/public/entities');
-            $turns->logo = $path;
-         }
         $turns->save();
         $msg = 'register_turn';
         event(new EventTurn($msg));
@@ -139,11 +137,11 @@ class TurnsController extends Controller
     public function update(Request $request, $id){
         try{
             $turn = Turns::find($id);
-            if($request->status == 'call_turn'){
-                $msg = ['action'=>'call_turn','turn'=>$turn->code.$turn->id,'puesto'=>$turn->window];
+            if($request->status == 'call'){
+                $msg = ['action'=>'call','turn'=>$turn->code.$turn->id,'puesto'=>$turn->window];
             }else{
                 $turn->update($request->all());
-                $msg = ['action'=>'update_turn'];
+                $msg = ['action'=>'wait'];
             }
             event(new EventTurn($msg));
             return response()->json(["data"=>"ok"],200);
