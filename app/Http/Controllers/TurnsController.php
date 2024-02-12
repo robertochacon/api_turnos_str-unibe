@@ -96,8 +96,9 @@ class TurnsController extends Controller
      */
     public function register(Request $request)
     {
-        // $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
+        $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
         $turns = new Turns(request()->all());
+        $turns->code = $totalToday;
         $turns->save();
         $msg = 'register_turn';
         event(new EventTurn($msg));
@@ -137,12 +138,14 @@ class TurnsController extends Controller
     public function update(Request $request, $id){
         try{
             $turn = Turns::find($id);
+            $turn->update($request->all());
+
             if($request->status == 'call'){
-                $msg = ['action'=>'call','turn'=>$turn->code.$turn->id,'puesto'=>$turn->window];
+                $msg = ['action'=>'call','turn'=>$turn->code,'puesto'=>$turn->window];
             }else{
-                $turn->update($request->all());
                 $msg = ['action'=>'wait'];
             }
+
             event(new EventTurn($msg));
             return response()->json(["data"=>"ok"],200);
         }catch (Exception $e) {
