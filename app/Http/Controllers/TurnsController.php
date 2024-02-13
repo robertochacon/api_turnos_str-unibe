@@ -98,7 +98,7 @@ class TurnsController extends Controller
     {
         $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
         $turns = new Turns(request()->all());
-        $turns->code = $totalToday;
+        $turns->code = ($totalToday+1);
         $turns->save();
         $msg = 'register_turn';
         event(new EventTurn($msg));
