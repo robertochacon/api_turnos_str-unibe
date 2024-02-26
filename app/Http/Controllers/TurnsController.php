@@ -96,13 +96,20 @@ class TurnsController extends Controller
      */
     public function register(Request $request)
     {
-        $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
-        $turns = new Turns(request()->all());
-        $turns->code = ($totalToday+1);
-        $turns->save();
-        $msg = 'register_turn';
-        event(new EventTurn($msg));
-        return response()->json(["data"=>$turns],200);
+        try {
+
+            $totalToday = Turns::whereDate('created_at', Carbon::today())->count();
+            $turns = new Turns(request()->all());
+            $turns->code = ($totalToday+1);
+            $turns->save();
+            $msg = 'register_turn';
+            event(new EventTurn($msg));
+            return response()->json(["data"=>$turns],200);
+
+        } catch (\Throwable $th) {
+            return response()->json(["data"=>"Problemas tecnicos"],200);
+        }
+
     }
 
     /**
